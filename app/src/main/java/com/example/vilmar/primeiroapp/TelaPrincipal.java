@@ -1,5 +1,7 @@
 package com.example.vilmar.primeiroapp;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +11,11 @@ import android.widget.TextView;
 
 public class TelaPrincipal extends AppCompatActivity
 {
+
     TextView vrTexto; //Variável de referencia
     EditText vrEditText;
     EditText vrAltura, vrPeso;
+    final int COD_SEGUNDA_TELA=2;
 
 
     @Override
@@ -29,7 +33,7 @@ public class TelaPrincipal extends AppCompatActivity
         vrTexto = (TextView) findViewById(R.id.textView3);
         vrPeso=(EditText) findViewById(R.id.editPeso);
         vrAltura=(EditText) findViewById(R.id.editAltura);
-        vrTexto.setText("Agora Sim");
+
 
 
     }
@@ -38,15 +42,7 @@ public class TelaPrincipal extends AppCompatActivity
         vrTexto.setText(vrEditText.getText());
     }
 
-    public void calcIMC(View v)
-    {
-        float result=0;
-        float altura,peso;
-        altura= Float.valueOf(vrAltura.getText().toString());
-        peso= Float.valueOf(vrPeso.getText().toString());
-        result= peso/(altura*altura);
-        vrTexto.setText(result+"");
-    }
+
 
     //Aplicação foi destruida
     public void onDestroy()
@@ -77,5 +73,34 @@ public class TelaPrincipal extends AppCompatActivity
         Log.i("INFO", "METODO onStop() executado"); // para exibir uma mensagem no console
 
         //Logica da interrupção
+    }
+
+    public void onClickCalcula(View v)
+    {
+        Bundle vrDados=new Bundle();
+        vrDados.putInt("peso", Integer.valueOf(vrPeso.getText().toString()));
+        vrDados.putFloat("altura",Float.valueOf(vrAltura.getText().toString()));
+        Intent vrIntent = new Intent(this,telaResultado.class);
+        vrIntent.putExtras(vrDados);
+                                    //tela atual, proxima tela
+       // startActivity(vrIntent); //
+        startActivityForResult(vrIntent,COD_SEGUNDA_TELA); // primeiro parametro é o intent e o segundo é o codigo da tela, pois o metodo que recebe o retorno,
+        // é o mesmo para varias telas, e com esse código ele vai saber de qual tela esta vindo o retorno
+
+    }
+
+    //Metodo que sera chamado
+    public void onActivityResult(int codTela, int result, Intent dados)
+    {
+        if(result== Activity.RESULT_CANCELED)
+        {
+            return;
+        }
+        if(codTela==COD_SEGUNDA_TELA)
+        {
+            Bundle bundle= dados.getExtras();
+            float imc=dados.getExtras().getFloat("IMC");
+            imc = imc;
+        }
     }
 }
